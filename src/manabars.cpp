@@ -14,13 +14,13 @@ bool Manabars::reload()
 bool Manabars::loadFromXml()
 {
 	pugi::xml_document doc;
-	pugi::xml_parse_result result = doc.load_file("data/XML/manaBar.xml");
+	pugi::xml_parse_result result = doc.load_file("data/XML/manabars.xml");
 	if (!result) {
 		printXMLError("Error - Manabars::loadFromXml", "data/XML/manabars.xml", result);
 		return false;
 	}
 
-	for (auto manaBarNode : doc.child("manaBar").children()) {
+	for (auto manaBarNode : doc.child("manabars").children()) {
 		manabars.emplace_back(
 			static_cast<uint8_t>(pugi::cast<uint16_t>(manaBarNode.attribute("id").value())),
 			manaBarNode.attribute("name").as_string(),
