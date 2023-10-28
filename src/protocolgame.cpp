@@ -819,19 +819,23 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 	std::string shaderName = otclientV8 ? msg.getString() : "";
 	Shader* shader = g_game.shaders.getShaderByName(shaderName);
 	newOutfit.lookShader = shader ? shader->id : 0;
+	std::string healthbarName = otclientV8 ? msg.getString() : "";
+	Healthbar* healthbar = g_game.healthbars.getHealthbarByName(healthbarName);
+	newOutfit.lookHealthbar = healthbar ? healthbar->id : 0;
 	addGameTask(&Game::playerChangeOutfit, player->getID(), newOutfit);
 }
 
 void ProtocolGame::parseToggleMount(NetworkMessage& msg)
 {
 	int mount = msg.get<int8_t>();
-	int wings = -1, aura = -1, shader = -1;
+	int wings = -1, aura = -1, shader = -1, healthbar = -1;
 	if (otclientV8 >= 254) {
 		wings = msg.get<int8_t>();
 		aura = msg.get<int8_t>();
 		shader = msg.get<int8_t>();
+		healthbar = msg.get<int8_t>();
 	}
-	addGameTask(&Game::playerToggleOutfitExtension, player->getID(), mount, wings, aura, shader);
+	addGameTask(&Game::playerToggleOutfitExtension, player->getID(), mount, wings, aura, shader, healthbar);
 }
 
 void ProtocolGame::parseUseItem(NetworkMessage& msg)
@@ -2854,6 +2858,19 @@ void ProtocolGame::sendOutfitWindow()
 			msg.add<uint16_t>(shader->id);
 			msg.addString(shader->name);
 		}
+
+		std::vector<const Healthbar*> healthbars;
+		for (const Healthbar& healthbar : g_game.healthbars.getHealthbars()) {
+			if (player->hasHealthbar(&healthbar)) {
+				healthbars.push_back(&healthbar);
+			}
+		}
+
+		msg.addByte(healthbars.size());
+		for (const Healthbar* healthbar : healthbars) {
+			msg.add<uint16_t>(healthbar->id);
+			msg.addString(healthbar->name);
+		}
 	}
 
 	writeToOutputBuffer(msg);
@@ -3096,6 +3113,8 @@ void ProtocolGame::AddOutfit(NetworkMessage& msg, const Outfit_t& outfit)
 		msg.add<uint16_t>(outfit.lookAura);
 		Shader* shader = g_game.shaders.getShaderByID(outfit.lookShader);
 		msg.addString(shader ? shader->name : "");
+		Healthbar* healthbar = g_game.healthbars.getHealthbarByID(outfit.lookHealthbar);
+		msg.addString(healthbar ? healthbar->name : "");
 	}
 }
 
@@ -3268,7 +3287,7 @@ void ProtocolGame::sendFeatures()
 	features[GameItemTooltip] = true; // fully available from version 2.6
 	features[GameWingsAndAura] = true;
 	features[GameOutfitShaders] = true;
-
+	features[GameHealthInfoBackground] = true;
 	// packet compression
 	// we don't send feature, because feature assumes all packets are compressed
 	// if adler32 is enabled then compression can be detected automaticly, just adlre32 must be 0

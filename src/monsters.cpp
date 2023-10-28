@@ -999,6 +999,11 @@ MonsterType* Monsters::loadMonster(const std::string& file, const std::string& m
 			mType->info.outfit.lookShader = shader ? shader->id : 0;
 		}
 
+		if ((attr = node.attribute("healthbar"))) {
+			Healthbar* healthbar = g_game.healthbars.getHealthbarByName(attr.as_string());
+			mType->info.outfit.lookHealthbar = healthbar ? healthbar->id : 0;
+		}
+
 		if ((attr = node.attribute("corpse"))) {
 			mType->info.lookcorpse = pugi::cast<uint16_t>(attr.value());
 		}

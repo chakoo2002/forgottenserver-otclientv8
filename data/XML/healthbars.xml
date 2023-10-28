@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<healthbars>
+    <healthbar id="1" name="outfit_circle" premium="no" />
+	<healthbar id="2" name="outfit_blood" premium="no" />
+	<healthbar id="3" name="outfit_purpleneon" premium="no" />
+	<healthbar id="4" name="outfit_3line" premium="no" />
+</healthbars>

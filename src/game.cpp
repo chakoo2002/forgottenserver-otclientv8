@@ -122,6 +122,7 @@ void Game::setGameState(GameState_t newState)
 			quests.loadFromXml();
 			mounts.loadFromXml();
 			auras.loadFromXml();
+			healthbars.loadFromXml();
 			wings.loadFromXml();
 			shaders.loadFromXml();
 
@@ -3364,7 +3365,7 @@ void Game::playerRequestOutfit(uint32_t playerId)
 	player->sendOutfitWindow();
 }
 
-void Game::playerToggleOutfitExtension(uint32_t playerId, int mount, int wings, int aura, int shader)
+void Game::playerToggleOutfitExtension(uint32_t playerId, int mount, int wings, int aura, int shader, int healthbar)
 {
 	Player* player = getPlayerByID(playerId);
 	if (!player) {
@@ -3392,6 +3393,7 @@ void Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 		outfit.lookWings = 0;
 		outfit.lookAura = 0;
 		outfit.lookShader = 0;
+		outfit.lookHealthbar = 0;
 	}
 
 	if (outfit.lookMount != 0) {
@@ -3448,6 +3450,17 @@ void Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 		}
 
 		if (!player->hasShader(shader)) {
+			return;
+		}
+	}
+
+	if (outfit.lookHealthbar) {
+		Healthbar* healthbar = healthbars.getHealthbarByID(outfit.lookHealthbar);
+		if (!healthbar) {
+			return;
+		}
+
+		if (!player->hasHealthbar(healthbar)) {
 			return;
 		}
 	}
@@ -5881,6 +5894,7 @@ bool Game::reload(ReloadTypes_t reloadType)
 		}
 		case RELOAD_TYPE_EVENTS: return g_events->load();
 		case RELOAD_TYPE_GLOBALEVENTS: return g_globalEvents->reload();
+		case RELOAD_TYPE_HEALTHBARS: return healthbars.reload();
 		case RELOAD_TYPE_ITEMS: return Item::items.reload();
 		case RELOAD_TYPE_MONSTERS: return g_monsters.reload();
 		case RELOAD_TYPE_MOUNTS: return mounts.reload();
@@ -5935,6 +5949,7 @@ bool Game::reload(ReloadTypes_t reloadType)
 			auras.reload();
 			wings.reload();
 			shaders.reload();
+			healthbars.reload();
 			g_config.reload();
 			g_events->load();
 			g_chat->load();
@@ -5968,6 +5983,7 @@ bool Game::reload(ReloadTypes_t reloadType)
 			mounts.reload();
 			wings.reload();
 			shaders.reload();
+			healthbars.reload();
 			g_globalEvents->reload();
 			g_events->load();
 			g_chat->load();
