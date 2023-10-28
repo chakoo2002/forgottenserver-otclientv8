@@ -4385,17 +4385,17 @@ bool Player::hasShader(const Shader* shader) const
 	return ((1 << (tmpShaderId % 31)) & value) != 0;
 }
 
-bool Player::hasHealthbar(const Healthbar* healthbar) const
+bool Player::hasHealthbar(const Healthbar* healthBar) const
 {
 	if (isAccessPlayer()) {
 		return true;
 	}
 
-	if (healthbar->premium && !isPremium()) {
+	if (healthBar->premium && !isPremium()) {
 		return false;
 	}
 
-	const uint8_t tmpHealthbarId = healthbar->id - 1;
+	const uint8_t tmpHealthbarId = healthBar->id - 1;
 
 	int32_t value;
 	if (!getStorageValue(PSTRG_HEALTHBARS_RANGE_START + (tmpHealthbarId / 31), value)) {
@@ -4405,6 +4405,25 @@ bool Player::hasHealthbar(const Healthbar* healthbar) const
 	return ((1 << (tmpHealthbarId % 31)) & value) != 0;
 }
 
+bool Player::hasManabar(const Manabar* manaBar) const
+{
+	if (isAccessPlayer()) {
+		return true;
+	}
+
+	if (manaBar->premium && !isPremium()) {
+		return false;
+	}
+
+	const uint8_t tmpManabarId = manaBar->id - 1;
+
+	int32_t value;
+	if (!getStorageValue(PSTRG_MANABARS_RANGE_START + (tmpManabarId / 31), value)) {
+		return false;
+	}
+
+	return ((1 << (tmpManabarId % 31)) & value) != 0;
+}
 
 bool Player::addOfflineTrainingTries(skills_t skill, uint64_t tries)
 {

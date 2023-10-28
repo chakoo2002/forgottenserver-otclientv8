@@ -218,9 +218,13 @@ bool Npc::loadFromXml()
 			Shader* shader = g_game.shaders.getShaderByName(attr.as_string());
 			defaultOutfit.lookShader = shader ? shader->id : 0;
 		}
-		if ((attr = lookNode.attribute("healthbar"))) {
-			Healthbar* healthbar = g_game.healthbars.getHealthbarByName(attr.as_string());
-			defaultOutfit.lookHealthbar = healthbar ? healthbar->id : 0;
+		if ((attr = lookNode.attribute("healthBar"))) {
+			Healthbar* healthBar = g_game.healthbars.getHealthbarByName(attr.as_string());
+			defaultOutfit.lookHealthbar = healthBar ? healthBar->id : 0;
+		}
+		if ((attr = lookNode.attribute("manaBar"))) {
+			Manabar* manaBar = g_game.manabars.getManabarByName(attr.as_string());
+			defaultOutfit.lookManabar = manaBar ? manaBar->id : 0;
 		}
 
 		currentOutfit = defaultOutfit;

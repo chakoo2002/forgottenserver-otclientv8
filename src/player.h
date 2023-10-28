@@ -40,6 +40,7 @@
 #include "wings.h"
 #include "shaders.h"
 #include "healthbars.h"
+#include "manabars.h"
 
 class House;
 class NetworkMessage;
@@ -178,6 +179,10 @@ class Player final : public Creature, public Cylinder
 		{
 			return defaultOutfit.lookHealthbar != 0;
 		}
+		bool hasManabar() const
+		{
+			return defaultOutfit.lookManabar != 0;
+		}
 		bool toggleMount(bool mount);
 		bool tameMount(uint8_t mountId);
 		bool untameMount(uint8_t mountId);
@@ -191,7 +196,8 @@ class Player final : public Creature, public Cylinder
 		uint8_t getCurrentWing() const;
 		void setCurrentWing(uint8_t wingId);
 		bool hasShader(const Shader* shader) const;
-		bool hasHealthbar(const Healthbar* healthbar) const;
+		bool hasHealthbar(const Healthbar* healthBar) const;
+		bool hasManabar(const Manabar* manaBar) const;
 
 		void sendFYIBox(const std::string& message) {
 			if (client) {

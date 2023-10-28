@@ -123,6 +123,7 @@ void Game::setGameState(GameState_t newState)
 			mounts.loadFromXml();
 			auras.loadFromXml();
 			healthbars.loadFromXml();
+			manabars.loadFromXml();
 			wings.loadFromXml();
 			shaders.loadFromXml();
 
@@ -3365,7 +3366,7 @@ void Game::playerRequestOutfit(uint32_t playerId)
 	player->sendOutfitWindow();
 }
 
-void Game::playerToggleOutfitExtension(uint32_t playerId, int mount, int wings, int aura, int shader, int healthbar)
+void Game::playerToggleOutfitExtension(uint32_t playerId, int mount, int wings, int aura, int shader, int healthBar, int manaBar)
 {
 	Player* player = getPlayerByID(playerId);
 	if (!player) {
@@ -3394,6 +3395,7 @@ void Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 		outfit.lookAura = 0;
 		outfit.lookShader = 0;
 		outfit.lookHealthbar = 0;
+		outfit.lookManabar = 0;
 	}
 
 	if (outfit.lookMount != 0) {
@@ -3455,12 +3457,23 @@ void Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 	}
 
 	if (outfit.lookHealthbar) {
-		Healthbar* healthbar = healthbars.getHealthbarByID(outfit.lookHealthbar);
-		if (!healthbar) {
+		Healthbar* healthBar = healthbars.getHealthbarByID(outfit.lookHealthbar);
+		if (!healthBar) {
 			return;
 		}
 
-		if (!player->hasHealthbar(healthbar)) {
+		if (!player->hasHealthbar(healthBar)) {
+			return;
+		}
+	}
+
+	if (outfit.lookManabar) {
+		Manabar* manaBar = manabars.getManabarByID(outfit.lookManabar);
+		if (!manaBar) {
+			return;
+		}
+
+		if (!player->hasManabar(manaBar)) {
 			return;
 		}
 	}
@@ -5895,6 +5908,7 @@ bool Game::reload(ReloadTypes_t reloadType)
 		case RELOAD_TYPE_EVENTS: return g_events->load();
 		case RELOAD_TYPE_GLOBALEVENTS: return g_globalEvents->reload();
 		case RELOAD_TYPE_HEALTHBARS: return healthbars.reload();
+		case RELOAD_TYPE_MANABARS: return manabars.reload();
 		case RELOAD_TYPE_ITEMS: return Item::items.reload();
 		case RELOAD_TYPE_MONSTERS: return g_monsters.reload();
 		case RELOAD_TYPE_MOUNTS: return mounts.reload();
@@ -5950,6 +5964,7 @@ bool Game::reload(ReloadTypes_t reloadType)
 			wings.reload();
 			shaders.reload();
 			healthbars.reload();
+			manabars.reload();
 			g_config.reload();
 			g_events->load();
 			g_chat->load();
@@ -5984,6 +5999,7 @@ bool Game::reload(ReloadTypes_t reloadType)
 			wings.reload();
 			shaders.reload();
 			healthbars.reload();
+			manabars.reload();
 			g_globalEvents->reload();
 			g_events->load();
 			g_chat->load();

@@ -999,9 +999,14 @@ MonsterType* Monsters::loadMonster(const std::string& file, const std::string& m
 			mType->info.outfit.lookShader = shader ? shader->id : 0;
 		}
 
-		if ((attr = node.attribute("healthbar"))) {
-			Healthbar* healthbar = g_game.healthbars.getHealthbarByName(attr.as_string());
-			mType->info.outfit.lookHealthbar = healthbar ? healthbar->id : 0;
+		if ((attr = node.attribute("healthBar"))) {
+			Healthbar* healthBar = g_game.healthbars.getHealthbarByName(attr.as_string());
+			mType->info.outfit.lookHealthbar = healthBar ? healthBar->id : 0;
+		}
+
+		if ((attr = node.attribute("manaBar"))) {
+			Manabar* manaBar = g_game.manabars.getManabarByName(attr.as_string());
+			mType->info.outfit.lookManabar = manaBar ? manaBar->id : 0;
 		}
 
 		if ((attr = node.attribute("corpse"))) {

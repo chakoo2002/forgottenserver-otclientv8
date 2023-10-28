@@ -786,6 +786,7 @@ Outfit_t LuaScriptInterface::getOutfit(lua_State* L, int32_t arg)
 
 	outfit.lookShader = getField<uint16_t>(L, arg, "lookShader");
 	outfit.lookHealthbar = getField<uint16_t>(L, arg, "lookHealthbar");
+	outfit.lookManabar = getField<uint16_t>(L, arg, "lookManabar");
 
 	lua_pop(L, 8);
 	return outfit;
@@ -957,6 +958,7 @@ void LuaScriptInterface::pushOutfit(lua_State* L, const Outfit_t& outfit)
 	setField(L, "lookAura", outfit.lookAura);
 	setField(L, "lookShader", outfit.lookShader);
 	setField(L, "lookHealthbar", outfit.lookHealthbar);
+	setField(L, "lookManabar", outfit.lookManabar);
 }
 
 void LuaScriptInterface::pushLoot(lua_State* L, const std::vector<LootBlock>& lootList)
@@ -1839,6 +1841,7 @@ void LuaScriptInterface::registerFunctions()
 	registerEnum(RELOAD_TYPE_GLOBALEVENTS)
 	registerEnum(RELOAD_TYPE_HEALTHBARS)
 	registerEnum(RELOAD_TYPE_ITEMS)
+	registerEnum(RELOAD_TYPE_MANABARS)
 	registerEnum(RELOAD_TYPE_MONSTERS)
 	registerEnum(RELOAD_TYPE_MOUNTS)
 	registerEnum(RELOAD_TYPE_MOVEMENTS)
@@ -12116,11 +12119,12 @@ int LuaScriptInterface::luaConditionSetFormula(lua_State* L)
 int LuaScriptInterface::luaConditionSetOutfit(lua_State* L)
 {
 	// condition:setOutfit(outfit)
-	// condition:setOutfit(lookTypeEx, lookType, lookHead, lookBody, lookLegs, lookFeet[, lookAddons[, lookMount, lookWings, lookAura, lookShader, lookHealthbar]])
+	// condition:setOutfit(lookTypeEx, lookType, lookHead, lookBody, lookLegs, lookFeet[, lookAddons[, lookMount, lookWings, lookAura, lookShader, lookHealthbar, lookManabar]])
 	Outfit_t outfit;
 	if (isTable(L, 2)) {
 		outfit = getOutfit(L, 2);
 	} else {
+		outfit.lookManabar = getNumber<uint16_t>(L, 14, outfit.lookManabar);
 		outfit.lookHealthbar = getNumber<uint16_t>(L, 13, outfit.lookHealthbar);
 		outfit.lookShader = getNumber<uint16_t>(L, 12, outfit.lookShader);
 		outfit.lookAura = getNumber<uint16_t>(L, 11, outfit.lookAura);

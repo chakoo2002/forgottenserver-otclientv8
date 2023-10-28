@@ -34,6 +34,7 @@
 #include "quests.h"
 #include "shaders.h"
 #include "healthbars.h"
+#include "manabars.h"
 
 class ServiceManager;
 class Creature;
@@ -396,7 +397,7 @@ class Game
 		void playerPassPartyLeadership(uint32_t playerId, uint32_t newLeaderId);
 		void playerLeaveParty(uint32_t playerId);
 		void playerEnableSharedPartyExperience(uint32_t playerId, bool sharedExpActive);
-		void playerToggleOutfitExtension(uint32_t playerId, int mount, int wings, int aura, int shader, int healthbar);
+		void playerToggleOutfitExtension(uint32_t playerId, int mount, int wings, int aura, int shader, int healthBar, int manaBar);
 		void playerLeaveMarket(uint32_t playerId);
 		void playerBrowseMarket(uint32_t playerId, uint16_t spriteId);
 		void playerBrowseMarketOwnOffers(uint32_t playerId);
@@ -514,6 +515,7 @@ class Game
 		Wings wings;
 		Shaders shaders;
 		Healthbars healthbars;
+		Manabars manabars;
 
 		std::forward_list<Item*> toDecayItems;
 

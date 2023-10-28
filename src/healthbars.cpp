@@ -33,8 +33,8 @@ bool Healthbars::loadFromXml()
 
 Healthbar* Healthbars::getHealthbarByID(uint8_t id)
 {
-	auto it = std::find_if(healthbars.begin(), healthbars.end(), [id](const Healthbar& healthbar) {
-		return healthbar.id == id;
+	auto it = std::find_if(healthbars.begin(), healthbars.end(), [id](const Healthbar& healthBar) {
+		return healthBar.id == id;
 		});
 
 	return it != healthbars.end() ? &*it : nullptr;

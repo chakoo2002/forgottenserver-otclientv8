@@ -820,22 +820,27 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 	Shader* shader = g_game.shaders.getShaderByName(shaderName);
 	newOutfit.lookShader = shader ? shader->id : 0;
 	std::string healthbarName = otclientV8 ? msg.getString() : "";
-	Healthbar* healthbar = g_game.healthbars.getHealthbarByName(healthbarName);
-	newOutfit.lookHealthbar = healthbar ? healthbar->id : 0;
+	Healthbar* healthBar = g_game.healthbars.getHealthbarByName(healthbarName);
+	newOutfit.lookHealthbar = healthBar ? healthBar->id : 0;
+	std::string manabarName = otclientV8 ? msg.getString() : "";
+	Manabar* manaBar = g_game.manabars.getManabarByName(manabarName);
+	newOutfit.lookManabar = manaBar ? manaBar->id : 0;
 	addGameTask(&Game::playerChangeOutfit, player->getID(), newOutfit);
+
 }
 
 void ProtocolGame::parseToggleMount(NetworkMessage& msg)
 {
 	int mount = msg.get<int8_t>();
-	int wings = -1, aura = -1, shader = -1, healthbar = -1;
+	int wings = -1, aura = -1, shader = -1, healthBar = -1, manaBar = -1;
 	if (otclientV8 >= 254) {
 		wings = msg.get<int8_t>();
 		aura = msg.get<int8_t>();
 		shader = msg.get<int8_t>();
-		healthbar = msg.get<int8_t>();
+		healthBar = msg.get<int8_t>();
+		manaBar = msg.get<int8_t>();
 	}
-	addGameTask(&Game::playerToggleOutfitExtension, player->getID(), mount, wings, aura, shader, healthbar);
+	addGameTask(&Game::playerToggleOutfitExtension, player->getID(), mount, wings, aura, shader, healthBar, manaBar);
 }
 
 void ProtocolGame::parseUseItem(NetworkMessage& msg)
@@ -2860,16 +2865,29 @@ void ProtocolGame::sendOutfitWindow()
 		}
 
 		std::vector<const Healthbar*> healthbars;
-		for (const Healthbar& healthbar : g_game.healthbars.getHealthbars()) {
-			if (player->hasHealthbar(&healthbar)) {
-				healthbars.push_back(&healthbar);
+		for (const Healthbar& healthBar : g_game.healthbars.getHealthbars()) {
+			if (player->hasHealthbar(&healthBar)) {
+				healthbars.push_back(&healthBar);
 			}
 		}
 
 		msg.addByte(healthbars.size());
-		for (const Healthbar* healthbar : healthbars) {
-			msg.add<uint16_t>(healthbar->id);
-			msg.addString(healthbar->name);
+		for (const Healthbar* healthBar : healthbars) {
+			msg.add<uint16_t>(healthBar->id);
+			msg.addString(healthBar->name);
+		}
+
+		std::vector<const Manabar*> manabars;
+		for (const Manabar& manaBar : g_game.manabars.getManabars()) {
+			if (player->hasManabar(&manaBar)) {
+				manabars.push_back(&manaBar);
+			}
+		}
+
+		msg.addByte(manabars.size());
+		for (const Manabar* manaBar : manabars) {
+			msg.add<uint16_t>(manaBar->id);
+			msg.addString(manaBar->name);
 		}
 	}
 
@@ -3113,8 +3131,10 @@ void ProtocolGame::AddOutfit(NetworkMessage& msg, const Outfit_t& outfit)
 		msg.add<uint16_t>(outfit.lookAura);
 		Shader* shader = g_game.shaders.getShaderByID(outfit.lookShader);
 		msg.addString(shader ? shader->name : "");
-		Healthbar* healthbar = g_game.healthbars.getHealthbarByID(outfit.lookHealthbar);
-		msg.addString(healthbar ? healthbar->name : "");
+		Healthbar* healthBar = g_game.healthbars.getHealthbarByID(outfit.lookHealthbar);
+		msg.addString(healthBar ? healthBar->name : "");
+		Manabar* manaBar = g_game.manabars.getManabarByID(outfit.lookManabar);
+		msg.addString(manaBar ? manaBar->name : "");
 	}
 }
 
